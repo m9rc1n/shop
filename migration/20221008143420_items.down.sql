@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS shop.items;
+DROP SCHEMA shop;

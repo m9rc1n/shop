@@ -1,0 +1,53 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+metadata:
+  name: shop
+build:
+  local:
+    useBuildkit: true
+  artifacts:
+    - image: github.com/m9rc1n/shop/reservations-api
+      docker:
+        dockerfile: deployments/reservations-api/Dockerfile
+    - image: github.com/m9rc1n/shop/items-api
+      docker:
+        dockerfile: deployments/items-api/Dockerfile
+portForward:
+  - resourceType: service
+    resourceName: items-api
+    port: 8080
+    localPort: 8080
+  - resourceType: service
+    resourceName: reservations-api
+    port: 8080
+    localPort: 8081
+  - resourceType: service
+    resourceName: shop-db-postgresql
+    port: 5432
+    localPort: 5432
+deploy:
+  helm:
+    flags:
+      install: [ "--create-namespace" ]
+    releases:
+      - name: shop-db
+        wait: true
+        repo: https://charts.bitnami.com/bitnami
+        remoteChart: postgresql
+        recreatePods: false
+        setValueTemplates:
+          "global.postgresql.auth.username": "{{.SHOP_DB_USER}}"
+          "global.postgresql.auth.password": "{{.SHOP_DB_PASSWORD}}"
+          "global.postgresql.auth.database": "{{.SHOP_DB_NAME}}"
+      - name: items-api
+        chartPath: deployments/helm/items-api
+        artifactOverrides:
+          image: github.com/m9rc1n/shop/items-api
+        imageStrategy:
+          helm: {}
+      - name: reservations-api
+        chartPath: deployments/helm/reservations-api
+        artifactOverrides:
+          image: github.com/m9rc1n/shop/reservations-api
+        imageStrategy:
+          helm: {}

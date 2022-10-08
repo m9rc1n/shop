@@ -1,0 +1,133 @@
+openapi: 3.0.3
+info:
+  description: Platform for creating and listing items
+  title: Items
+  version: 1.0.0
+paths:
+  /items:
+    get:
+      operationId: listItems
+      tags:
+        - items
+      responses:
+        "200":
+          description: list of reservation items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/item"
+        default:
+          description: generic error response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+    post:
+      tags:
+        - items
+      operationId: createItem
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/item"
+      responses:
+        "201":
+          description: reservation item created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/item"
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+  /alive:
+    get:
+      operationId: isAlive
+      tags:
+        - healthcheck
+      responses:
+        "200":
+          description: API is alive
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/healthcheck"
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+  /ready:
+    get:
+      operationId: isReady
+      tags:
+        - healthcheck
+      responses:
+        "200":
+          description: API is ready
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/healthcheck"
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+components:
+  schemas:
+    item:
+      type: object
+      required:
+        - name
+        - quantity
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        reserved_at:
+          type: string
+          format: date-time
+          readOnly: true
+        reservation_id:
+          type: integer
+          format: int64
+          readOnly: true
+    healthcheck:
+      type: string
+    error:
+      type: object
+      required:
+        - message
+        - code
+      properties:
+        code:
+          type: integer
+          format: int
+        message:
+          type: string
