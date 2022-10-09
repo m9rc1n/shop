@@ -27,8 +27,6 @@ portForward:
     localPort: 5432
 deploy:
   helm:
-    flags:
-      install: [ "--create-namespace" ]
     releases:
       - name: shop-db
         wait: true

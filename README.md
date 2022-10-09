@@ -16,11 +16,11 @@ What things you need to install the software and how to install them
 3. Install [Helm](https://helm.sh/)
 4. Install [Minikube](https://minikube.sigs.k8s.io/docs/start/)
 5. Export env variables needed for Skaffold
-```
-export SHOP_DB_USER=user &&
-export SHOP_DB_PASSWORD=super-secret &&
-export SHOP_DB_NAME=shop
-```
+   ```
+   export SHOP_DB_USER=user &&
+   export SHOP_DB_PASSWORD=super-secret &&
+   export SHOP_DB_NAME=shop
+   ```
 
 ### Running (locally)
 
@@ -28,9 +28,9 @@ export SHOP_DB_NAME=shop
    ```
    minikube start
    ```
-2. Start skaffold dev in selected namespace
+2. Start skaffold to deploy helm charts to your cluster
    ```
-   skaffold dev --namespace development
+   skaffold dev
    ```
 
 ### Debugging
