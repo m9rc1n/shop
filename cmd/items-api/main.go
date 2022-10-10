@@ -26,13 +26,14 @@ func main() {
 		panic(err)
 	}
 	newRepository := repository.NewRepository(newDB, newLogger)
+	newMigrator := repository.NewMigrator(newDB, newLogger)
 	newService := service.NewService(
 		newRepository,
 		newReservationsClient,
 		newLogger,
 	)
 	newStore := store.NewStore(newLogger, newService)
-	if err := newRepository.MigrateUp(); err != nil {
+	if err := newMigrator.MigrateUp(); err != nil {
 		newLogger.Errorf("failed to migrating items: %s", err.Error())
 		panic(err)
 	}

@@ -17,10 +17,6 @@ const (
 
 // Repository define item repository methods interface
 type Repository interface {
-	// MigrateUp item
-	MigrateUp() error
-	// MigrateDown item
-	MigrateDown() error
 	// List returns the list of items
 	List() ([]*Item, error)
 	// Get an item by id

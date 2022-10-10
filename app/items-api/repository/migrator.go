@@ -4,11 +4,31 @@ import (
 	"fmt"
 	migrater "github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
+	"github.com/jmoiron/sqlx"
+	"github.com/m9rc1n/shop/pkg/log"
 	"os"
 )
 
+// Migrator automatically migrates the database
+type Migrator interface {
+	// MigrateUp item
+	MigrateUp() error
+	// MigrateDown item
+	MigrateDown() error
+}
+
+type migrator struct {
+	db     *sqlx.DB
+	logger log.Logger
+}
+
+// NewMigrator creates a new migrator
+func NewMigrator(db *sqlx.DB, log log.Logger) Migrator {
+	return migrator{db: db, logger: log}
+}
+
 // Migrate to run database migration up or down
-func (r repository) configureMigrater() (*migrater.Migrate, error) {
+func (r migrator) configureMigrater() (*migrater.Migrate, error) {
 	path, err := os.Getwd()
 	if err != nil {
 		r.logger.Error(err)
@@ -29,7 +49,7 @@ func (r repository) configureMigrater() (*migrater.Migrate, error) {
 }
 
 // MigrateUp item
-func (r repository) MigrateUp() error {
+func (r migrator) MigrateUp() error {
 	m, err := r.configureMigrater()
 	if err != nil {
 		r.logger.Errorf("An error occurred while configuring database migrater: %v", err)
@@ -44,7 +64,7 @@ func (r repository) MigrateUp() error {
 }
 
 // MigrateDown item
-func (r repository) MigrateDown() error {
+func (r migrator) MigrateDown() error {
 	m, err := r.configureMigrater()
 	if err != nil {
 		r.logger.Errorf("An error occurred while configuring database migrater: %v", err)
